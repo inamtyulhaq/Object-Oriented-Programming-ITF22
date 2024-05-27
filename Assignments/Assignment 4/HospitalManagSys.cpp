@@ -258,25 +258,21 @@ void updatePatient(vector<Patient> &patients)
     {
         cout << "No record found with ID " << id << ".\n";
     }
-}
 
 int main()
 {
     vector<Patient> patients;
     int choice;
-
-    do
-    {
+    do {
         cout << "\nPatient Management System\n";
-        cout << "1. Add Patient";
-        cout << "2. Delete Patient";
-        cout << "3. Update Patient";
-        cout << "4. Search Patien/t";
+        cout << "1. Add Patient\n";
+        cout << "2. Delete Patient\n";
+        cout << "3. Update Patient\n";
+        cout << "4. Search Patient\n";
         cout << "5. Exit\n";
         cout << "Enter your choice: ";
-        cin >> choice;
-        switch (choice)
-        {
+        cin>>choice;
+    switch (choice) {
         case 1:
             addPatient(patients);
             break;
@@ -295,7 +291,8 @@ int main()
         default:
             cout << "Invalid choice. Please try again.\n";
         }
-    } while (choice != 5);
-
-    return 0;
+    } while (choice != 6);
 }
+
+void updatePatient(vector<Patient> &patients);
+void searchPatientById();
