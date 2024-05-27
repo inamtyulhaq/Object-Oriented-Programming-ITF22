@@ -74,29 +74,200 @@ public:
 
 void addPatient(vector<Patient> &patients)
 {
+    int id;
+    string name, cnic, phoneNumber, disease;
+    bool isAdmitted;
+
+    cout << "Enter ID: ";
+    cin >> id;
+    cin.ignore();
+
+    cout << "Enter Name: ";
+    getline(cin, name);
+
+    cout << "Enter CNIC: ";
+    getline(cin, cnic);
+
+    cout << "Enter Phone Number: ";
+    getline(cin, phoneNumber);
+
+    cout << "Enter Disease: ";
+    getline(cin, disease);
+
+    cout << "Is Admitted (1 for Yes, 0 for No): ";
+    cin >> isAdmitted;
+
+    Patient newPatient(id, name, cnic, phoneNumber, disease, isAdmitted);
+    patients.push_back(newPatient);
+
+    ofstream outFile("patient_record.txt", ios::app);
+    if (outFile.is_open())
+    {
+        newPatient.saveToFile(outFile);
+        outFile.close();
+        cout << "Patient added and saved to file successfully.\n";
+    }
+    else
+    {
+        cerr << "Unable to open file.\n";
+    }
 }
 
 void deletePatientById(int id, vector<Patient> &patients)
 {
+    bool found = false;
+    vector<Patient> updatedPatients;
+
+    for (const auto &patient : patients)
+    {
+        if (patient.getId() == id)
+        {
+            found = true;
+        }
+        else
+        {
+            updatedPatients.push_back(patient);
+        }
+    }
+
+    if (found)
+    {
+        patients = updatedPatients;
+        ofstream outFile("patient_record.txt");
+        if (outFile.is_open())
+        {
+            for (const auto &patient : patients)
+            {
+                patient.saveToFile(outFile);
+            }
+            outFile.close();
+            cout << "Patient deleted and file updated successfully.\n";
+        }
+        else
+        {
+            cerr << "Unable to open file.\n";
+        }
+    }
+    else
+    {
+        cout << "No record found with ID " << id << ".\n";
+    }
+}
+
+void deletePatient(vector<Patient> &patients)
+{
+    int id;
+    cout << "Enter Patient ID to delete: ";
+    cin >> id;
+
+    deletePatientById(id, patients);
 }
 
 void updatePatientInfo(Patient &patient)
 {
-}
+    string name, cnic, phoneNumber, disease;
+    bool isAdmitted;
 
-void deletePatient(vector <Patient> &patients)
-{
+    cin.ignore();
+
+    cout << "Enter new Name: ";
+    getline(cin, name);
+    patient.setName(name);
+
+    cout << "Enter new CNIC: ";
+    getline(cin, cnic);
+    patient.setCnic(cnic);
+
+    cout << "Enter new Phone Number: ";
+    getline(cin, phoneNumber);
+    patient.setPhoneNumber(phoneNumber);
+
+    cout << "Enter new Disease: ";
+    getline(cin, disease);
+    patient.setDisease(disease);
+
+    cout << "Is Admitted (1 for Yes, 0 for No): ";
+    cin >> isAdmitted;
+    patient.setIsAdmitted(isAdmitted);
 }
 
 void searchPatient()
 {
+    int id;
+    cout << "Enter Patient ID to search: ";
+    cin >> id;
+
+    ifstream inFile("patient_record.txt");
+    if (!inFile.is_open())
+    {
+        cerr << "Unable to open file.\n";
+        return;
+    }
+
+    bool found = false;
+    while (inFile.peek() != EOF)
+    {
+        Patient patient = Patient::loadFromFile(inFile);
+        if (patient.getId() == id)
+        {
+            patient.displayInfo();
+            found = true;
+            break;
+        }
+    }
+
+    if (!found)
+    {
+        cout << "No record found with ID " << id << ".\n";
+    }
+
+    inFile.close();
+}
+
+void updatePatient(vector<Patient> &patients)
+{
+    int id;
+    cout << "Enter Patient ID to update: ";
+    cin >> id;
+
+    bool found = false;
+    for (auto &patient : patients)
+    {
+        if (patient.getId() == id)
+        {
+            found = true;
+            updatePatientInfo(patient);
+            cout << "Patient updated successfully.\n";
+
+            ofstream outFile("patient_record.txt");
+            if (outFile.is_open())
+            {
+                for (const auto &p : patients)
+                {
+                    p.saveToFile(outFile);
+                }
+                outFile.close();
+            }
+            else
+            {
+                cerr << "Unable to open file.\n";
+            }
+            break;
+        }
+    }
+    if (!found)
+    {
+        cout << "No record found with ID " << id << ".\n";
+    }
 }
 
 int main()
 {
     vector<Patient> patients;
     int choice;
-    do {
+
+    do
+    {
         cout << "\nPatient Management System\n";
         cout << "1. Add Patient\n";
         cout << "2. Delete Patient\n";
@@ -104,8 +275,9 @@ int main()
         cout << "4. Search Patient\n";
         cout << "5. Exit\n";
         cout << "Enter your choice: ";
-        cin>>choice;
-    switch (choice) {
+        cin >> choice;
+        switch (choice)
+        {
         case 1:
             addPatient(patients);
             break;
@@ -124,9 +296,6 @@ int main()
         default:
             cout << "Invalid choice. Please try again.\n";
         }
-    } while (choice != 6);
+    } while (choice != 5);
+    return 0;
 }
-
-void updatePatient(vector<Patient> &patients);
-void searchPatientById();
-
