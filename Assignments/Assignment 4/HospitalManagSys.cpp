@@ -17,35 +17,33 @@ private:
 
 public:
     Patient(int id, const string &name, const string &cnic, const string &phoneNumber, const string &disease, bool isAdmitted)
-        : id(id), name(name), cnic(cnic), phoneNumber(phoneNumber), disease(disease), isAdmitted(isAdmitted)
-    {
-    }
+        : id(id), name(name), cnic(cnic), phoneNumber(phoneNumber), disease(disease), isAdmitted(isAdmitted) {}
 
     int getId() const { return id; }
     string getName() const { return name; }
     string getCnic() const { return cnic; }
     string getPhoneNumber() const { return phoneNumber; }
-    string getDisease() { return disease; }
-    bool getIsAdmitted() { return isAdmitted; }
+    string getDisease() const { return disease; }
+    bool getIsAdmitted() const { return isAdmitted; }
 
     void setId(int id) { this->id = id; }
     void setName(const string &name) { this->name = name; }
-    void setCnic(const string &cnic) { this->nic = cnic; }
+    void setCnic(const string &cnic) { this->cnic = cnic; }
     void setPhoneNumber(const string &phoneNumber) { this->phoneNumber = phoneNumber; }
     void setDisease(const string &disease) { this->disease = disease; }
     void setIsAdmitted(bool isAdmitted) { this->isAdmitted = isAdmitted; }
 
     void displayInfo() const
     {
-        cout << "id: " << id << "\n"
-             << "name: " << name << "\n"
+        cout << "ID: " << id << "\n"
+             << "Name: " << name << "\n"
              << "CNIC: " << cnic << "\n"
-             << "Phone Number: " << phoneNcmber << "\n"
+             << "Phone Number: " << phoneNumber << "\n"
              << "Disease: " << disease << "\n"
              << "Is Admitted: " << (isAdmitted ? "Yes" : "No") << "\n";
     }
 
-    void saveToFile(ofstream &outFile)
+    void saveToFile(ofstream &outFile) const
     {
         outFile << id << "\n"
                 << name << "\n"
@@ -55,7 +53,7 @@ public:
                 << isAdmitted << "\n";
     }
 
-    static Patient loadFromFile(ifstream inFile)
+    static Patient loadFromFile(ifstream &inFile)
     {
         int id;
         string name, cnic, phoneNumber, disease;
@@ -90,13 +88,13 @@ void addPatient(vector<Patient> &patients)
     cout << "Enter CNIC: ";
     getline(cin, cnic);
 
-    cout << "enter phone number: ";
+    cout << "Enter Phone Number: ";
     getline(cin, phoneNumber);
 
-    cout << "enter disease: ";
+    cout << "Enter Disease: ";
     getline(cin, disease);
 
-    cout << "is admitted: ";
+    cout << "Is Admitted (1 for Yes, 0 for No): ";
     cin >> isAdmitted;
 
     Patient newPatient(id, name, cnic, phoneNumber, disease, isAdmitted);
@@ -107,7 +105,7 @@ void addPatient(vector<Patient> &patients)
     {
         newPatient.saveToFile(outFile);
         outFile.close();
-        cout << "patient added and saved to file successfully.\n";
+        cout << "Patient added and saved to file successfully.\n";
     }
     else
     {
@@ -138,11 +136,11 @@ void deletePatientById(int id, vector<Patient> &patients)
         ofstream outFile("patient_record.txt");
         if (outFile.is_open())
         {
-            for (auto &patient : patients)
+            for (const auto &patient : patients)
             {
-                patient.saveoFile(outFile);
+                patient.saveToFile(outFile);
             }
-            outFile.close;
+            outFile.close();
             cout << "Patient deleted and file updated successfully.\n";
         }
         else
@@ -159,7 +157,7 @@ void deletePatientById(int id, vector<Patient> &patients)
 void deletePatient(vector<Patient> &patients)
 {
     int id;
-    cout << "enter patient id to delete: ";
+    cout << "Enter Patient ID to delete: ";
     cin >> id;
 
     deletePatientById(id, patients);
@@ -180,15 +178,15 @@ void updatePatientInfo(Patient &patient)
     getline(cin, cnic);
     patient.setCnic(cnic);
 
-    cout << "Enter new phone nmber: ";
+    cout << "Enter new Phone Number: ";
     getline(cin, phoneNumber);
     patient.setPhoneNumber(phoneNumber);
 
-    cout << "enter new dsease: ";
+    cout << "Enter new Disease: ";
     getline(cin, disease);
     patient.setDisease(disease);
 
-    cout << "Is admitted (1 for yes, 0 for no): ";
+    cout << "Is Admitted (1 for Yes, 0 for No): ";
     cin >> isAdmitted;
     patient.setIsAdmitted(isAdmitted);
 }
@@ -199,6 +197,7 @@ void searchPatient()
     cout << "Enter Patient ID to search: ";
     cin >> id;
 
+    ifstream inFile("patient_record.txt");
     if (!inFile.is_open())
     {
         cerr << "Unable to open file.\n";
@@ -208,6 +207,7 @@ void searchPatient()
     bool found = false;
     while (inFile.peek() != EOF)
     {
+        Patient patient = Patient::loadFromFile(inFile);
         if (patient.getId() == id)
         {
             patient.displayInfo();
@@ -248,8 +248,9 @@ void updatePatient(vector<Patient> &patients)
                 }
                 outFile.close();
             }
+            else
             {
-                cout << "Unable to open file.";
+                cerr << "Unable to open file.\n";
             }
             break;
         }
@@ -258,12 +259,15 @@ void updatePatient(vector<Patient> &patients)
     {
         cout << "No record found with ID " << id << ".\n";
     }
+}
 
 int main()
 {
     vector<Patient> patients;
     int choice;
-    do {
+
+    do
+    {
         cout << "\nPatient Management System\n";
         cout << "1. Add Patient\n";
         cout << "2. Delete Patient\n";
@@ -271,8 +275,9 @@ int main()
         cout << "4. Search Patient\n";
         cout << "5. Exit\n";
         cout << "Enter your choice: ";
-        cin>>choice;
-    switch (choice) {
+        cin >> choice;
+        switch (choice)
+        {
         case 1:
             addPatient(patients);
             break;
@@ -291,8 +296,6 @@ int main()
         default:
             cout << "Invalid choice. Please try again.\n";
         }
-    } while (choice != 6);
+    } while (choice != 5);
+    return 0;
 }
-
-void updatePatient(vector<Patient> &patients);
-void searchPatientById();
