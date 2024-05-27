@@ -84,5 +84,49 @@ void updatePatientInfo(Patient &patient)
 {
 }
 
+void deletePatient(vector <Patient> &patients)
+{
+}
+
+void searchPatient()
+{
+}
+
+int main()
+{
+    vector<Patient> patients;
+    int choice;
+    do {
+        cout << "\nPatient Management System\n";
+        cout << "1. Add Patient\n";
+        cout << "2. Delete Patient\n";
+        cout << "3. Update Patient\n";
+        cout << "4. Search Patient\n";
+        cout << "5. Exit\n";
+        cout << "Enter your choice: ";
+        cin>>choice;
+    switch (choice) {
+        case 1:
+            addPatient(patients);
+            break;
+        case 2:
+            deletePatient(patients);
+            break;
+        case 3:
+            updatePatient(patients);
+            break;
+        case 4:
+            searchPatient();
+            break;
+        case 5:
+            cout << "BYE BYE\n";
+            break;
+        default:
+            cout << "Invalid choice. Please try again.\n";
+        }
+    } while (choice != 6);
+}
+
 void updatePatient(vector<Patient> &patients);
 void searchPatientById();
+
